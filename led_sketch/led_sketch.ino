@@ -26,6 +26,9 @@ CRGB top_leds[TOP_COUNT];
 // Which scene we are displaying
 char currentMode = '0';
 
+#define RAINBOW '1'
+#define MARQUEE '2'
+
 void setup() {
 
   delay(3000); // 3 second delay for recovery
@@ -59,16 +62,16 @@ void setup() {
 void loop() {
 
   switch (currentMode) {
-    case '1':
+    case RAINBOW:
       rainbowCycle(20);
       break;
-    case '2':
+    case MARQUEE:
       marquee(500);
       copyLEDs();
+      FastLED.show();
       break;
     default:
       clearAll();
-      copyLEDs();
       break;
   }
 }
@@ -99,13 +102,15 @@ void rainbowCycle(int SpeedDelay) {
     for(i=0; i< NUM_LEDS; i++) {
       c=Wheel(((i * 256 / NUM_LEDS) + j*10) & 255);
       setPixel(i, *c, *(c+1), *(c+2));
-      if (delayWhileInMode(SpeedDelay, '1')) {
+      if (currentMode != RAINBOW) {
+        clearAll();
         return;
       }
     }
     copyLEDs();
     FastLED.show();
-    if (delayWhileInMode(SpeedDelay, '1')) {
+    if (delayWhileInMode(SpeedDelay, RAINBOW)) {
+      clearAll();
       return;
     }
   }
@@ -203,4 +208,6 @@ void setAll(byte red, byte green, byte blue) {
 
 void clearAll() {
   setAll(0,0,0);
+  copyLEDs();
+  FastLED.show();
 }
