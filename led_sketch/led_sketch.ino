@@ -62,10 +62,30 @@ void loop() {
     case '1':
       rainbowCycle(20);
       break;
+    case '2':
+      marquee(500);
+      copyLEDs();
+      break;
     default:
       clearAll();
       copyLEDs();
       break;
+  }
+}
+
+// Marquee
+void marquee(unsigned long speedDelay) {
+  unsigned long millisTime = millis();
+  unsigned long cycle = (millisTime % speedDelay) / (speedDelay / 3);
+
+  // Serial.println("millis: " + String(millisTime) + " cycle: " + String(cycle));
+
+  for(int i = 0; i < NUM_LEDS; i++ ) {
+    if (i % 3 == cycle) {
+      setPixel(i, 255, 255, 255);
+    } else {
+      setPixel(i, 0, 0, 0);
+    }
   }
 
   FastLED.show();
@@ -73,6 +93,7 @@ void loop() {
 
 // Rainbow display
 void rainbowCycle(int SpeedDelay) {
+
   byte *c;
   uint16_t i, j;
 
@@ -80,6 +101,9 @@ void rainbowCycle(int SpeedDelay) {
     for(i=0; i< NUM_LEDS; i++) {
       c=Wheel(((i * 256 / NUM_LEDS) + j*10) & 255);
       setPixel(i, *c, *(c+1), *(c+2));
+      if (delayWhileInMode(SpeedDelay, '1')) {
+        return;
+      }
     }
     copyLEDs();
     FastLED.show();
