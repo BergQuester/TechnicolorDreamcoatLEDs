@@ -24,10 +24,11 @@ CRGB top_leds[TOP_COUNT];
 #define BRIGHTNESS  32
 
 // Which scene we are displaying
-char currentMode = '0';
+char currentMode = 'n';
 
-#define RAINBOW '1'
+#define DREAMCOAT '1'
 #define MARQUEE '2'
+#define GO_JOESEPH '3'
 
 void setup() {
 
@@ -62,13 +63,16 @@ void setup() {
 void loop() {
 
   switch (currentMode) {
-    case RAINBOW:
-      rainbowCycle(20);
+    case DREAMCOAT:
+      dreamcoat(20);
       break;
     case MARQUEE:
       marquee(500);
       copyLEDs();
       FastLED.show();
+      break;
+    case GO_JOESEPH:
+      goJoseph(20);
       break;
     default:
       clearAll();
@@ -93,23 +97,58 @@ void marquee(unsigned long speedDelay) {
 }
 
 // Rainbow display
-void rainbowCycle(int SpeedDelay) {
+void dreamcoat(int SpeedDelay) {
 
   byte *c;
   uint16_t i, j;
 
-  for(j=0; j<256*5/10; j++) { // 5 cycles of all colors on wheel
+  for(j=0; j<256*5; j++) { // 5 cycles of all colors on wheel
     for(i=0; i< NUM_LEDS; i++) {
-      c=Wheel(((i * 256 / NUM_LEDS) + j*10) & 255);
+      c=Wheel(((i * 256 / NUM_LEDS) + j*2) & 255);
       setPixel(i, *c, *(c+1), *(c+2));
-      if (currentMode != RAINBOW) {
+      if (currentMode != DREAMCOAT) {
         clearAll();
         return;
       }
     }
-    copyLEDs();
-    FastLED.show();
-    if (delayWhileInMode(SpeedDelay, RAINBOW)) {
+    
+    if (currentMode != DREAMCOAT) {
+      clearAll();
+      return;
+    } else {
+      copyLEDs();
+      FastLED.show();
+    }
+    if (delayWhileInMode(SpeedDelay, DREAMCOAT)) {
+      clearAll();
+      return;
+    }
+  }
+}
+
+void goJoseph(int SpeedDelay) {
+
+  byte *c;
+  uint16_t i, j;
+
+  for(j=0; j<256*5; j++) { // 5 cycles of all colors on wheel
+    for(i=0; i< NUM_LEDS; i++) {
+      c=Wheel(((i * 256 / NUM_LEDS) + j*10) & 255);
+      setPixel(i, *c, *(c+1), *(c+2));
+      if (currentMode != GO_JOESEPH) {
+        clearAll();
+        return;
+      }
+    }
+    
+    if (currentMode != GO_JOESEPH) {
+      clearAll();
+      return;
+    } else {
+      copyLEDs();
+      FastLED.show();
+    }
+    if (delayWhileInMode(SpeedDelay, GO_JOESEPH)) {
       clearAll();
       return;
     }
