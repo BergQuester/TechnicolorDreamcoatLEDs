@@ -20,7 +20,8 @@ CRGB leds[NUM_LEDS];  // Bottom
 CRGB middle_leds[MIDDLE_COUNT];
 CRGB top_leds[TOP_COUNT];
 
-#define BRIGHTNESS  255
+// #define BRIGHTNESS  255
+#define BRIGHTNESS  32
 
 // Which scene we are displaying
 char currentMode = '0';
@@ -30,7 +31,6 @@ void setup() {
   delay(3000); // 3 second delay for recovery
 
   Serial.begin(9600); // Set up serial coms
-
   // tell FastLED about the LED strip configuration
   FastLED.addLeds<LED_TYPE,BOTTOM_PIN,COLOR_ORDER>(leds, NUM_LEDS)
     .setCorrection(TypicalLEDStrip)
