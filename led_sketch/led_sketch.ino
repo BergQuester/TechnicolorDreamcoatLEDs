@@ -5,31 +5,22 @@
 #endif
 
 // FastLED Config
-#define DATA_PIN    3
-#define TR_PIN      3
-#define TL_PIN      3
-#define MR_PIN      3
-#define ML_PIN      3
-#define BR_PIN      3
-#define BL_PIN      3
+#define BOTTOM_PIN  2
+#define MIDDLE_PIN  3
+#define TOP_PIN     4
+
 //#define CLK_PIN   4
 #define LED_TYPE    WS2811
 #define COLOR_ORDER GRB
-#define NUM_LEDS    100
-#define TR_COUNT      3
-#define TL_COUNT      3
-#define MR_COUNT      3
-#define ML_COUNT      3
-#define BR_COUNT      3
-#define BL_COUNT      3
-#define BRIGHTNESS  255
+#define NUM_LEDS      200 // Bottom
+#define MIDDLE_COUNT  100
+#define TOP_COUNT     MIDDLE_COUNT
 
-CRGB leds[NUM_LEDS];
-CRGB leds2[NUM_LEDS];
-CRGB leds3[NUM_LEDS];
-CRGB leds4[NUM_LEDS];
-CRGB leds5[NUM_LEDS];
-CRGB leds6[NUM_LEDS];
+CRGB leds[NUM_LEDS];  // Bottom
+CRGB middle_leds[MIDDLE_COUNT];
+CRGB top_leds[TOP_COUNT];
+
+#define BRIGHTNESS  255
 
 // Which scene we are displaying
 char currentMode = '0';
@@ -41,27 +32,15 @@ void setup() {
   Serial.begin(9600); // Set up serial coms
 
   // tell FastLED about the LED strip configuration
-  FastLED.addLeds<LED_TYPE,2,COLOR_ORDER>(leds, NUM_LEDS)
+  FastLED.addLeds<LED_TYPE,BOTTOM_PIN,COLOR_ORDER>(leds, NUM_LEDS)
     .setCorrection(TypicalLEDStrip)
     .setDither(BRIGHTNESS < 255);
 
-  FastLED.addLeds<LED_TYPE,3,COLOR_ORDER>(leds, NUM_LEDS)
+  FastLED.addLeds<LED_TYPE,MIDDLE_PIN,COLOR_ORDER>(middle_leds, MIDDLE_COUNT)
     .setCorrection(TypicalLEDStrip)
     .setDither(BRIGHTNESS < 255);
 
-  FastLED.addLeds<LED_TYPE,4,COLOR_ORDER>(leds, NUM_LEDS)
-    .setCorrection(TypicalLEDStrip)
-    .setDither(BRIGHTNESS < 255);
-
-  FastLED.addLeds<LED_TYPE,5,COLOR_ORDER>(leds, NUM_LEDS)
-    .setCorrection(TypicalLEDStrip)
-    .setDither(BRIGHTNESS < 255);
-
-  FastLED.addLeds<LED_TYPE,6,COLOR_ORDER>(leds, NUM_LEDS)
-    .setCorrection(TypicalLEDStrip)
-    .setDither(BRIGHTNESS < 255);
-
-  FastLED.addLeds<LED_TYPE,7,COLOR_ORDER>(leds, NUM_LEDS)
+  FastLED.addLeds<LED_TYPE,TOP_PIN,COLOR_ORDER>(leds, TOP_COUNT)
     .setCorrection(TypicalLEDStrip)
     .setDither(BRIGHTNESS < 255);
 
@@ -81,9 +60,11 @@ void loop() {
   switch (currentMode) {
     case '1':
       rainbow();
+      copyLEDs();
       break;
     default:
-
+      clearAll();
+      copyLEDs();
       break;
   }
 
@@ -177,4 +158,36 @@ void serialEvent() {
       char devNull = (char)Serial.read();
     }
   }
+}
+
+// Copy LEDs
+void copyLEDs() {
+  for(int i = 0; i < TOP_COUNT; i++) {
+    top_leds[i] = leds[i];
+    middle_leds[TOP_COUNT - i] = leds[i];
+  }
+}
+
+// FastLED Convienence methods
+void showStrip() {
+   // FastLED
+   FastLED.show();
+}
+
+void setPixel(int Pixel, byte red, byte green, byte blue) {
+   // FastLED
+   leds[Pixel].r = red;
+   leds[Pixel].g = green;
+   leds[Pixel].b = blue;
+}
+
+void setAll(byte red, byte green, byte blue) {
+  for(int i = 0; i < NUM_LEDS; i++ ) {
+    setPixel(i, red, green, blue);
+  }
+  showStrip();
+}
+
+void clearAll() {
+  setAll(0,0,0);
 }
