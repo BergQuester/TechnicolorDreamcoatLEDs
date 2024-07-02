@@ -31,6 +31,7 @@ void setup() {
   delay(3000); // 3 second delay for recovery
 
   Serial.begin(9600); // Set up serial coms
+
   // tell FastLED about the LED strip configuration
   FastLED.addLeds<LED_TYPE,BOTTOM_PIN,COLOR_ORDER>(leds, NUM_LEDS)
     .setCorrection(TypicalLEDStrip)
@@ -59,8 +60,7 @@ void loop() {
 
   switch (currentMode) {
     case '1':
-      rainbow();
-      copyLEDs();
+      rainbowCycle(20);
       break;
     default:
       clearAll();
@@ -72,47 +72,43 @@ void loop() {
 }
 
 // Rainbow display
-// This function draws rainbows with an ever-changing,
-// widely-varying set of parameters.
-void rainbow() 
-{
-  static uint16_t sPseudotime = 0;
-  static uint16_t sLastMillis = 0;
-  static uint16_t sHue16 = 0;
- 
-  uint8_t sat8 = beatsin88( 87, 220, 250);
-  uint8_t brightdepth = beatsin88( 341, 96, 224);
-  uint16_t brightnessthetainc16 = beatsin88( 203, (25 * 256), (40 * 256));
-  uint8_t msmultiplier = beatsin88(147, 23, 60);
+void rainbowCycle(int SpeedDelay) {
+  byte *c;
+  uint16_t i, j;
 
-  uint16_t hue16 = sHue16;//gHue * 256;
-  uint16_t hueinc16 = beatsin88(113, 1, 3000);
-  
-  uint16_t ms = millis();
-  uint16_t deltams = ms - sLastMillis ;
-  sLastMillis  = ms;
-  sPseudotime += deltams * msmultiplier;
-  sHue16 += deltams * beatsin88( 400, 5,9);
-  uint16_t brightnesstheta16 = sPseudotime;
-  
-  for( uint16_t i = 0 ; i < NUM_LEDS; i++) {
-    hue16 += hueinc16;
-    uint8_t hue8 = hue16 / 256;
-
-    brightnesstheta16  += brightnessthetainc16;
-    uint16_t b16 = sin16( brightnesstheta16  ) + 32768;
-
-    uint16_t bri16 = (uint32_t)((uint32_t)b16 * (uint32_t)b16) / 65536;
-    uint8_t bri8 = (uint32_t)(((uint32_t)bri16) * brightdepth) / 65536;
-    bri8 += (255 - brightdepth);
-    
-    CRGB newcolor = CHSV( hue8, sat8, bri8);
-    
-    uint16_t pixelnumber = i;
-    pixelnumber = (NUM_LEDS-1) - pixelnumber;
-    
-    nblend( leds[pixelnumber], newcolor, 64);
+  for(j=0; j<256*5/10; j++) { // 5 cycles of all colors on wheel
+    for(i=0; i< NUM_LEDS; i++) {
+      c=Wheel(((i * 256 / NUM_LEDS) + j*10) & 255);
+      setPixel(i, *c, *(c+1), *(c+2));
+    }
+    copyLEDs();
+    FastLED.show();
+    if (delayWhileInMode(SpeedDelay, '1')) {
+      return;
+    }
   }
+}
+
+byte * Wheel(byte WheelPos) {
+  static byte c[3];
+ 
+  if(WheelPos < 85) {
+   c[0]=WheelPos * 3;
+   c[1]=255 - WheelPos * 3;
+   c[2]=0;
+  } else if(WheelPos < 170) {
+   WheelPos -= 85;
+   c[0]=255 - WheelPos * 3;
+   c[1]=0;
+   c[2]=WheelPos * 3;
+  } else {
+   WheelPos -= 170;
+   c[0]=0;
+   c[1]=WheelPos * 3;
+   c[2]=255 - WheelPos * 3;
+  }
+
+  return c;
 }
 
 // Creates a dealy while in a mode
@@ -162,17 +158,12 @@ void serialEvent() {
 
 // Copy LEDs
 void copyLEDs() {
-  for(int i = 0; i < TOP_COUNT; i++) {
-    top_leds[i] = leds[i];
-    middle_leds[TOP_COUNT - i] = leds[i];
+  for(int i = 0; i < MIDDLE_COUNT; i++) {
+    middle_leds[MIDDLE_COUNT - i] = leds[i];
   }
 }
 
 // FastLED Convienence methods
-void showStrip() {
-   // FastLED
-   FastLED.show();
-}
 
 void setPixel(int Pixel, byte red, byte green, byte blue) {
    // FastLED
@@ -185,7 +176,7 @@ void setAll(byte red, byte green, byte blue) {
   for(int i = 0; i < NUM_LEDS; i++ ) {
     setPixel(i, red, green, blue);
   }
-  showStrip();
+  FastLED.show();
 }
 
 void clearAll() {
