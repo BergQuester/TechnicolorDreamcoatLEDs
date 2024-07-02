@@ -78,8 +78,6 @@ void marquee(unsigned long speedDelay) {
   unsigned long millisTime = millis();
   unsigned long cycle = (millisTime % speedDelay) / (speedDelay / 3);
 
-  // Serial.println("millis: " + String(millisTime) + " cycle: " + String(cycle));
-
   for(int i = 0; i < NUM_LEDS; i++ ) {
     if (i % 3 == cycle) {
       setPixel(i, 255, 255, 255);
