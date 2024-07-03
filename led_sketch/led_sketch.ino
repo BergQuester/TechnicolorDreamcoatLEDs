@@ -71,19 +71,18 @@ void loop() {
       break;
     case MARQUEE:
       marquee(500);
-      copyLEDs();
-      FastLED.show();
       break;
     case GO_JOESEPH:
       goJoseph(20);
       break;
     case BLUE:
+      FastLED.setBrightness(BRIGHTNESS);
       setAll(255, 0, 0);  // For some reason the order is BRG
       copyLEDs();
       FastLED.show();
       break;
     case FADE_OUT:
-      fadeout();
+      fadeout(0.9);
       break;
     default:
       clearAll();
@@ -92,16 +91,20 @@ void loop() {
 }
 
 // Fadeout effect takes that current values and fades to nothing
-void fadeout() {
-  bool done = false;
-  while (!done) {
-    for(int i = 0; i < NUM_LEDS; i++ ) {
-      fadePixel(i, 0.9);
-    }
-
-    copyLEDs();
+void fadeout(float fadeScale) {
+  uint8_t fade = FastLED.getBrightness();
+  do {
+    fade = fade * fadeScale;
+    // Serial.println("Fade: " + String(fade));
+    FastLED.setBrightness(fade);
     FastLED.show();
-  }
+    delay(20);
+  } while(fade > 0);
+
+  currentMode = 'n';
+  clearAll();
+  FastLED.show();
+  Serial.println("Fade completed");
 }
 
 // Marquee
@@ -143,7 +146,9 @@ void dreamcoat(int SpeedDelay) {
     serialEvent(); // Check for user input since we're blocking the main loop
     
     if (currentMode != DREAMCOAT) {
-      clearAll();
+      if (currentMode != FADE_OUT) {
+        clearAll();
+      }
       return;
     } else {
       copyLEDs();
@@ -169,7 +174,9 @@ void goJoseph(int SpeedDelay) {
     serialEvent(); // Check for user input since we're blocking the main loop
 
     if (currentMode != GO_JOESEPH) {
-      clearAll();
+      if (currentMode != FADE_OUT) {
+        clearAll();
+      }
       return;
     } else {
       copyLEDs();
@@ -259,12 +266,6 @@ void setPixel(int Pixel, byte red, byte green, byte blue) {
    leds[Pixel].r = red;
    leds[Pixel].g = green;
    leds[Pixel].b = blue;
-}
-
-void fadePixel(int Pixel, float amount) {
-   leds[Pixel].r = leds[Pixel].r * amount;
-   leds[Pixel].g = leds[Pixel].g * amount;
-   leds[Pixel].b = leds[Pixel].b * amount;
 }
 
 void setAll(byte red, byte green, byte blue) {
