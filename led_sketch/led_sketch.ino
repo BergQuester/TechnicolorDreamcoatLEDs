@@ -106,18 +106,23 @@ void fadeout() {
 
 // Marquee
 void marquee(unsigned long speedDelay) {
-  unsigned long millisTime = millis();
-  unsigned long cycle = (millisTime % speedDelay) / (speedDelay / 3);
+  do {
+    unsigned long millisTime = millis();
+    unsigned long cycle = (millisTime % speedDelay) / (speedDelay / 3);
 
-  for(int i = 0; i < NUM_LEDS; i++ ) {
-    if (i % 3 == cycle) {
-      setPixel(i, 255, 255, 255);
-    } else {
-      setPixel(i, 0, 0, 0);
+    for(int i = 0; i < NUM_LEDS; i++ ) {
+      if (i % 3 == cycle) {
+        setPixel(i, 30, 255, 100); // For some reason the order is BRG
+      } else {
+        setPixel(i, 0, 0, 0);
+      }
     }
-  }
-
-  FastLED.show();
+    copyLEDs();
+    FastLED.show();
+    if (cycle == 0) {
+      serialEvent();
+    }
+  } while (currentMode == MARQUEE);
 }
 
 // Rainbow display
