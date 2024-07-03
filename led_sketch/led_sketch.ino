@@ -31,6 +31,7 @@ char currentMode = 'n';
 #define MARQUEE '3'
 
 #define FADE_OUT 'f'
+#define BLUE 'b'
 
 void setup() {
 
@@ -75,6 +76,11 @@ void loop() {
       break;
     case GO_JOESEPH:
       goJoseph(20);
+      break;
+    case BLUE:
+      setAll(0, 0, 255);
+      copyLEDs();
+      FastLED.show();
       break;
     case FADE_OUT:
       fadeout();
