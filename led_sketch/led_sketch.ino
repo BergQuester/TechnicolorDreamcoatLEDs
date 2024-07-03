@@ -27,8 +27,8 @@ CRGB top_leds[TOP_COUNT];
 char currentMode = 'n';
 
 #define DREAMCOAT '1'
-#define MARQUEE '2'
-#define GO_JOESEPH '3'
+#define GO_JOESEPH '2'
+#define MARQUEE '3'
 
 void setup() {
 
