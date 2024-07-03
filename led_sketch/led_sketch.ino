@@ -27,8 +27,9 @@ CRGB top_leds[TOP_COUNT];
 char currentMode = 'n';
 
 #define DREAMCOAT '1'
-#define GO_JOESEPH '2'
-#define MARQUEE '3'
+#define POTIPHAR '2'
+#define GO_JOESEPH '3'
+#define MARQUEE '4'
 
 #define FADE_OUT 'f'
 #define BLUE 'b'
@@ -84,10 +85,30 @@ void loop() {
     case FADE_OUT:
       fadeout(0.9);
       break;
+    case POTIPHAR:
+      potiphar();
+      break;
     default:
       clearAll();
       break;
   }
+}
+
+bool potipharData[101] = {true, true, true, false, true, true, true, false, false, true, true, true, false, true,
+ true, true, true, true, true, false, false, false, true, true, true, false, true, true, true, true, true, true,
+  false, false, true, true, true, true, true, true, false, true, true, true, true, true, true, true, true, true, 
+  true, true, true, false, false, false, true, true, true, true, true, true, false, false, false, false, false, 
+  false, true, true, true, false, true, true, true, false, false, false, false, false, false, false, false, true, 
+  true, true, true, true, true, true, true, true, false, false, true, true, true, false, false, false, false};
+
+void potiphar() {
+  for (int i = 0; i < NUM_LEDS; i++) {
+    if (potipharData[i % 101]) {
+      setPixel(i, 255, 255, 255);
+    }
+  }
+  copyLEDs();
+  FastLED.show();
 }
 
 // Fadeout effect takes that current values and fades to nothing
@@ -257,6 +278,9 @@ void serialEvent() {
       break;
     case BLUE:
       Serial.println("BLUE!");
+      break;
+    case POTIPHAR:
+      Serial.println("Potiphar");
       break;
     case FADE_OUT:
       Serial.println("Starting fadeout");
