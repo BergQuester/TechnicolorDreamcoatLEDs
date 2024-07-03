@@ -21,7 +21,7 @@ CRGB middle_leds[MIDDLE_COUNT];
 CRGB top_leds[TOP_COUNT];
 
 // #define BRIGHTNESS  255
-#define BRIGHTNESS  32
+#define BRIGHTNESS  22
 
 // Which scene we are displaying
 char currentMode = 'n';
@@ -106,6 +106,7 @@ void fadeout() {
 
 // Marquee
 void marquee(unsigned long speedDelay) {
+  FastLED.setBrightness(64);
   do {
     unsigned long millisTime = millis();
     unsigned long cycle = (millisTime % speedDelay) / (speedDelay / 3);
@@ -131,6 +132,8 @@ void dreamcoat(int SpeedDelay) {
   byte *c;
   uint16_t i, j;
 
+  FastLED.setBrightness(BRIGHTNESS);
+
   for(j=0; j<256*5; j++) { // 5 cycles of all colors on wheel
     for(i=0; i< NUM_LEDS; i++) {
       c=Wheel(((i * 256 / NUM_LEDS) + j*2) & 255);
@@ -154,6 +157,8 @@ void goJoseph(int SpeedDelay) {
 
   byte *c;
   uint16_t i, j;
+
+  FastLED.setBrightness(BRIGHTNESS);
 
   for(j=0; j<256*5; j++) { // 5 cycles of all colors on wheel
     for(i=0; i< NUM_LEDS; i++) {
