@@ -130,11 +130,9 @@ void dreamcoat(int SpeedDelay) {
     for(i=0; i< NUM_LEDS; i++) {
       c=Wheel(((i * 256 / NUM_LEDS) + j*2) & 255);
       setPixel(i, *c, *(c+1), *(c+2));
-      if (currentMode != DREAMCOAT) {
-        clearAll();
-        return;
-      }
     }
+
+    serialEvent(); // Check for user input since we're blocking the main loop
     
     if (currentMode != DREAMCOAT) {
       clearAll();
@@ -143,10 +141,7 @@ void dreamcoat(int SpeedDelay) {
       copyLEDs();
       FastLED.show();
     }
-    if (delayWhileInMode(SpeedDelay, DREAMCOAT)) {
-      clearAll();
-      return;
-    }
+    delay(SpeedDelay);
   }
 }
 
@@ -159,12 +154,10 @@ void goJoseph(int SpeedDelay) {
     for(i=0; i< NUM_LEDS; i++) {
       c=Wheel(((i * 256 / NUM_LEDS) + j*10) & 255);
       setPixel(i, *c, *(c+1), *(c+2));
-      if (currentMode != GO_JOESEPH) {
-        clearAll();
-        return;
-      }
     }
     
+    serialEvent(); // Check for user input since we're blocking the main loop
+
     if (currentMode != GO_JOESEPH) {
       clearAll();
       return;
@@ -172,10 +165,7 @@ void goJoseph(int SpeedDelay) {
       copyLEDs();
       FastLED.show();
     }
-    if (delayWhileInMode(SpeedDelay, GO_JOESEPH)) {
-      clearAll();
-      return;
-    }
+    delay(SpeedDelay);
   }
 }
 
