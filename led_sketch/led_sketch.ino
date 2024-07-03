@@ -78,7 +78,7 @@ void loop() {
       goJoseph(20);
       break;
     case BLUE:
-      setAll(0, 0, 255);
+      setAll(255, 0, 0);  // For some reason the order is BRG
       copyLEDs();
       FastLED.show();
       break;
