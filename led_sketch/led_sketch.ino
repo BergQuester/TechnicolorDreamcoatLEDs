@@ -244,7 +244,26 @@ void serialEvent() {
       return;
     }
     currentMode = inputChar;
-    Serial.println(currentMode);
+
+  switch (currentMode) {
+    case DREAMCOAT:
+      Serial.println("Dreamcoat");
+      break;
+    case MARQUEE:
+      Serial.println("Pharaoh");
+      break;
+    case GO_JOESEPH:
+      Serial.println("Go Go Go Joseph");
+      break;
+    case BLUE:
+      Serial.println("BLUE!");
+      break;
+    case FADE_OUT:
+      Serial.println("Starting fadeout");
+      break;
+    default:
+      break;
+  }
 
     // clear buffer (only interested in the first character)
     while (Serial.available()) {
