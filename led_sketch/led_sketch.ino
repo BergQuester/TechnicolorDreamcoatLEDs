@@ -24,7 +24,7 @@ CRGB top_leds[TOP_COUNT];
 #define BRIGHTNESS  22
 
 // Which scene we are displaying
-char currentMode = 'n';
+char currentMode = ' ';
 
 #define DREAMCOAT '1'
 #define POTIPHAR '2'
@@ -102,11 +102,8 @@ bool potipharData[101] = {true, true, true, false, true, true, true, false, fals
   true, true, true, true, true, true, true, true, false, false, true, true, true, false, false, false, false};
 
 void potiphar() {
-  for (int i = 0; i < NUM_LEDS; i++) {
-    if (potipharData[i % 101]) {
-      setPixel(i, 255, 255, 255);
-    }
-  }
+  FastLED.setBrightness(16);
+  setAll(10, 255, 70);
   copyLEDs();
   FastLED.show();
 }
