@@ -30,6 +30,8 @@ char currentMode = 'n';
 #define GO_JOESEPH '2'
 #define MARQUEE '3'
 
+#define FADE_OUT 'f'
+
 void setup() {
 
   delay(3000); // 3 second delay for recovery
@@ -74,9 +76,25 @@ void loop() {
     case GO_JOESEPH:
       goJoseph(20);
       break;
+    case FADE_OUT:
+      fadeout();
+      break;
     default:
       clearAll();
       break;
+  }
+}
+
+// Fadeout effect takes that current values and fades to nothing
+void fadeout() {
+  bool done = false;
+  while (!done) {
+    for(int i = 0; i < NUM_LEDS; i++ ) {
+      fadePixel(i, 0.9);
+    }
+
+    copyLEDs();
+    FastLED.show();
   }
 }
 
@@ -232,10 +250,15 @@ void copyLEDs() {
 // FastLED Convienence methods
 
 void setPixel(int Pixel, byte red, byte green, byte blue) {
-   // FastLED
    leds[Pixel].r = red;
    leds[Pixel].g = green;
    leds[Pixel].b = blue;
+}
+
+void fadePixel(int Pixel, float amount) {
+   leds[Pixel].r = leds[Pixel].r * amount;
+   leds[Pixel].g = leds[Pixel].g * amount;
+   leds[Pixel].b = leds[Pixel].b * amount;
 }
 
 void setAll(byte red, byte green, byte blue) {
