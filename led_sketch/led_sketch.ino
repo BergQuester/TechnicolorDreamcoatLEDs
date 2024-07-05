@@ -28,7 +28,7 @@ char currentMode = ' ';
 
 #define DREAMCOAT '1'
 #define POTIPHAR '2'
-#define GO_JOESEPH '3'
+#define GO_JOSEPH '3'
 #define MARQUEE '4'
 
 #define FADE_OUT 'f'
@@ -73,7 +73,7 @@ void loop() {
     case MARQUEE:
       marquee(500);
       break;
-    case GO_JOESEPH:
+    case GO_JOSEPH:
       goJoseph(20);
       break;
     case BLUE:
@@ -191,7 +191,7 @@ void goJoseph(int SpeedDelay) {
     
     serialEvent(); // Check for user input since we're blocking the main loop
 
-    if (currentMode != GO_JOESEPH) {
+    if (currentMode != GO_JOSEPH) {
       if (currentMode != FADE_OUT) {
         clearAll();
       }
@@ -261,30 +261,44 @@ void serialEvent() {
     if (inputChar == '\n') {  // don't care about newlines
       return;
     }
-    currentMode = inputChar;
 
-  switch (currentMode) {
-    case DREAMCOAT:
-      Serial.println("Dreamcoat");
-      break;
-    case MARQUEE:
-      Serial.println("Pharaoh");
-      break;
-    case GO_JOESEPH:
-      Serial.println("Go Go Go Joseph");
-      break;
-    case BLUE:
-      Serial.println("BLUE!");
-      break;
-    case POTIPHAR:
-      Serial.println("Potiphar");
-      break;
-    case FADE_OUT:
-      Serial.println("Starting fadeout");
-      break;
-    default:
-      break;
-  }
+    if (inputChar == 'h') {
+      Serial.println("*******************************************************");
+      Serial.println("h: This help");
+      Serial.println(String(DREAMCOAT) + ": Dreamcoat");
+      Serial.println(String(POTIPHAR) + ": Potiphar / Jacob Comes to Egypt");
+      Serial.println(String(GO_JOSEPH) + ": Go Go Go Joseph / Mega Mix");
+      Serial.println(String(MARQUEE) + ": Pharoh / Pharoh Mega Mix Reprise");
+      Serial.println(String(FADE_OUT) + ": Fade_Out");
+      Serial.println(String(BLUE) + ": Blue");
+      Serial.println("Space bar (or any other key not used above): Clear");
+      Serial.println("*******************************************************");
+    } else {
+      currentMode = inputChar;
+    }
+
+    switch (currentMode) {
+      case DREAMCOAT:
+        Serial.println("Dreamcoat");
+        break;
+      case MARQUEE:
+        Serial.println("Pharaoh");
+        break;
+      case GO_JOSEPH:
+        Serial.println("Go Go Go Joseph");
+        break;
+      case BLUE:
+        Serial.println("BLUE!");
+        break;
+      case POTIPHAR:
+        Serial.println("Potiphar");
+        break;
+      case FADE_OUT:
+        Serial.println("Starting fadeout");
+        break;
+      default:
+        break;
+    }
 
     // clear buffer (only interested in the first character)
     while (Serial.available()) {
