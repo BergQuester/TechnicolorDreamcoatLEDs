@@ -12,7 +12,7 @@
 //#define CLK_PIN   4
 #define LED_TYPE    WS2811
 #define COLOR_ORDER GRB
-#define NUM_LEDS      200 // Bottom
+#define NUM_LEDS      197 // Bottom
 #define MIDDLE_COUNT  100
 #define TOP_COUNT     MIDDLE_COUNT
 
